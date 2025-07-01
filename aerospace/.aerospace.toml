@@ -41,6 +41,9 @@ on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
     alt-enter = '''exec-and-forget osascript -e '
     tell application "iTerm"
          activate
+         if (count of windows) >= 1 then
+            create window with default profile
+         end if
     end tell'
     '''
 
