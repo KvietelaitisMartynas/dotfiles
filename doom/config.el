@@ -25,8 +25,8 @@
 ;; See 'C-h v doom-font' for documentation and more examples of what they
 ;; accept. For example:
 ;;
-;;(setq doom-font (font-spec :family "Fira Code" :size 12 :weight 'semi-light)
-;;      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13))
+(setq doom-font (font-spec :family "MesloLGS Nerd Font Mono" :size 14)
+      doom-variable-pitch-font (font-spec :family "MesloLgS Nerd Font Mono" :size 14))
 ;;
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
@@ -50,22 +50,22 @@
     ("personal"    . "~/Documents/notes/personal"))
   "Alist mapping user-friendly names to Org Agenda folder paths.")
 
-;;(defun my/prompt-org-agenda-folder (&rest _)
-;;  "Prompt user to select a folder alias and set `org-agenda-files`."
-;;  (let* ((choice (completing-read "Choose Org Agenda Folder: " (mapcar #'car my/org-agenda-folders-alist) nil t))
-;;         (path   (cdr (assoc choice my/org-agenda-folders-alist))))
-;;    (when path
-;;      (setq org-agenda-files (directory-files-recursively path "\\.org$"))
-;;     (message "Org Agenda files set from: %s" path))));;
-
 (defun my/prompt-org-agenda-folder (&rest _)
   "Prompt user to select a folder alias and set `org-agenda-files`."
   (let* ((choice (completing-read "Choose Org Agenda Folder: " (mapcar #'car my/org-agenda-folders-alist) nil t))
          (path   (cdr (assoc choice my/org-agenda-folders-alist))))
     (when path
-      (setq my/org-agenda-current-folder choice)
       (setq org-agenda-files (directory-files-recursively path "\\.org$"))
-      (message "Org Agenda files set from: %s" path))))
+     (message "Org Agenda files set from: %s" path))));;
+
+;;(defun my/prompt-org-agenda-folder (&rest _)
+;;  "Prompt user to select a folder alias and set `org-agenda-files`."
+;;  (let* ((choice (completing-read "Choose Org Agenda Folder: " (mapcar #'car my/org-agenda-folders-alist) nil t))
+;;         (path   (cdr (assoc choice my/org-agenda-folders-alist))))
+;;    (when path
+;;      (setq my/org-agenda-current-folder choice)
+;;      (setq org-agenda-files (directory-files-recursively path "\\.org$"))
+;;      (message "Org Agenda files set from: %s" path))))
 
 ;;(defun my/org-agenda-custom-prefix ()
 ;;  "Return COURSE and ROOM if the current agenda folder is 'f2025'."
@@ -74,26 +74,27 @@
 ;;              (or (org-entry-get (point) "COURSE") "")
 ;;              (or (org-entry-get (point) "
 
-(defun my/org-agenda-custom-prefix ()
-  "Return COURSE and ROOM if in 'f2025' folder and entry is scheduled (not a deadline)."
-  (if (and (string= my/org-agenda-current-folder "f2025")
-           (org-get-scheduled-time (point)))  ;; Check if scheduled
-      (format "%s | %s | "
-              (or (org-entry-get (point) "COURSE") "")
-              (or (org-entry-get (point) "ROOM") ""))
-    (format " %s | "
-              (or (org-entry-get (point) "COURSE") ""))))  ;; Else branch: return empty string
+;;(defun my/org-agenda-custom-prefix ()
+;;  "Return COURSE and ROOM if in 'f2025' folder and entry is scheduled (not a deadline)."
+ ;; (org-agenda-with-point-at-orig-entry
+;;  (if (and (string= my/org-agenda-current-folder "f2025")
+;;           (org-get-scheduled-time (point)))  ;; Check if scheduled
+;;      (format "%s | %s | "
+;;              (or (org-entry-get (point) "COURSE") "")
+;;              (or (org-entry-get (point) "ROOM") ""))
+;;    (format " %s | "
+;;              (or (org-entry-get (point) "COURSE") ""))))  ;; Else branch: return empty string
 
 
 (advice-add 'org-agenda :before #'my/prompt-org-agenda-folder)
 
 (setq org-use-property-inheritance t)
 
-(setq org-agenda-prefix-format
-      '((agenda . "  %i %-12:c%?-12t% s %(my/org-agenda-custom-prefix)")
-        (todo . "  %i %-12:c")
-        (tags . "  %i %-12:c")
-        (search . "  %i %-12:c")))
+;;(setq org-agenda-prefix-format
+;;      '((agenda . "  %i %-12:c%?-12t% s %(my/org-agenda-custom-prefix)")
+;;        (todo . "  %i %-12:c")
+;;        (tags . "  %i %-12:c")
+;;        (search . "  %i %-12:c")))
 
 
 ;;(setq org-agenda-prefix-format
@@ -101,10 +102,6 @@
 ;;        (todo . "  %i %-12:c")
 ;;        (tags . "  %i %-12:c")
 ;;        (search . "  %i %-12:c")))
-
-(setq org-agenda-span 14
-      org-agenda-start-on-weekday nil
-      org-agenda-start-day "-3d")
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
@@ -222,24 +219,24 @@
 ;; (add-hook 'input-method-deactivate-hook #'my/auto-spell-language)
 
 ;; Auto-detect language based on text content
-(defun my/detect-language-and-switch-spell ()
-  "Detect language based on text content and switch spell checker."
-  (interactive)
-  (save-excursion
-    (let ((text (if (region-active-p)
-                    (buffer-substring-no-properties (region-beginning) (region-end))
-                  (buffer-substring-no-properties (point-min) (min (+ (point-min) 1000) (point-max))))))
-      (if (string-match-p "[ĄąČčĘęĖėĮįŠšŲųŪūŽž]" text)
-          (progn
-            (ispell-change-dictionary "lt_LT")
-            (message "Detected Lithuanian text, switched spell checker"))
-        (progn
-          (ispell-change-dictionary "en_US")
-          (message "Detected English text, switched spell checker"))))))
-
+;;(defun my/detect-language-and-switch-spell ()
+;;  "Detect language based on text content and switch spell checker."
+;;  (interactive)
+;;  (save-excursion
+;;    (let ((text (if (region-active-p)
+;;                    (buffer-substring-no-properties (region-beginning) (region-end))
+;;                  (buffer-substring-no-properties (point-min) (min (+ (point-min) 1000) (point-max))))))
+;;      (if (string-match-p "[ĄąČčĘęĖėĮįŠšŲųŪūŽž]" text)
+;;          (progn
+;;            (ispell-change-dictionary "lt_LT")
+;;            (message "Detected Lithuanian text, switched spell checker"))
+;;        (progn
+;;          (ispell-change-dictionary "en_US")
+;;          (message "Detected English text, switched spell checker"))))))
+;;
 ;; Bind language detection - using a different key combination
-(map! :leader
-      :desc "Detect and switch language" "d l s" #'my/detect-language-and-switch-spell)
+;;(map! :leader
+;;      :desc "Detect and switch language" "d l s" #'my/detect-language-and-switch-spell)
 
 ;; Per-file language setting
 ;; Add this as a file-local variable at the top of your org files:
@@ -248,3 +245,11 @@
 ;; # Local Variables:
 ;; # ispell-local-dictionary: "lt_LT"
 ;; # End:
+
+(after! org
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((python . t)
+     (javascript . t)
+     (go . t)
+     (rust .t))))
